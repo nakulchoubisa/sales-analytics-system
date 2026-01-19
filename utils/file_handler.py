@@ -1,6 +1,5 @@
 import os
 
-import os
 
 def read_sales_data(filename):
     """
@@ -38,10 +37,11 @@ def read_sales_data(filename):
 
     return cleaned_lines
 
-def write_report(path, report):
-    # Ensure output directory exists
+def write_report(path, content):
+    """
+    Writes text report to file.
+    """
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
-    with open(path, "w") as f:
-        for k, v in report.items():
-            f.write(f"{k}: {v}\n")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)
