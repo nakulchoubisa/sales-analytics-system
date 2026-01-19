@@ -48,3 +48,49 @@ def analyze_sales(records):
         "Total Revenue": round(total_revenue, 2),
         "Total Transactions": len(records)
     }
+    
+def parse_transactions(raw_lines):
+    """
+    Parses raw lines into clean list of dictionaries
+
+    Returns: list of dictionaries with keys:
+    ['TransactionID', 'Date', 'ProductID', 'ProductName',
+     'Quantity', 'UnitPrice', 'CustomerID', 'Region']
+    """
+
+    parsed_records = []
+
+    for line in raw_lines:
+        parts = line.split("|")
+
+        # Skip rows with incorrect number of fields
+        if len(parts) != 8:
+            continue
+
+        transaction_id, date, product_id, product_name, quantity, unit_price, customer_id, region = parts
+
+        # Clean ProductName (remove commas)
+        product_name = product_name.replace(",", "")
+
+        # Clean numeric fields
+        try:
+            quantity = int(quantity)
+            unit_price = float(unit_price.replace(",", ""))
+        except ValueError:
+            continue
+
+        record = {
+            "TransactionID": transaction_id,
+            "Date": date,
+            "ProductID": product_id,
+            "ProductName": product_name,
+            "Quantity": quantity,
+            "UnitPrice": unit_price,
+            "CustomerID": customer_id,
+            "Region": region
+        }
+
+        parsed_records.append(record)
+
+    return parsed_records
+
