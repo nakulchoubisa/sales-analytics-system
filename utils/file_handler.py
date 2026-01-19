@@ -1,8 +1,42 @@
 import os
 
-def read_sales_data(file_path):
-    with open(file_path, "r", encoding="latin-1") as f:
-        return f.readlines()
+import os
+
+def read_sales_data(filename):
+    """
+    Reads sales data from file handling encoding issues
+    """
+
+    encodings = ["utf-8", "latin-1", "cp1252"]
+
+    for encoding in encodings:
+        try:
+            with open(filename, "r", encoding=encoding) as file:
+                lines = file.readlines()
+                break
+        except UnicodeDecodeError:
+            continue
+        except FileNotFoundError:
+            print(f"Error: File not found -> {filename}")
+            return []
+    else:
+        print("Error: Unable to read file due to encoding issues")
+        return []
+
+    cleaned_lines = []
+
+    for line in lines:
+        line = line.strip()
+
+        if not line:
+            continue
+
+        if line.startswith("TransactionID"):
+            continue
+
+        cleaned_lines.append(line)
+
+    return cleaned_lines
 
 def write_report(path, report):
     # Ensure output directory exists
