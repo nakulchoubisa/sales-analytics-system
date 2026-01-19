@@ -197,5 +197,238 @@ def calculate_total_revenue(transactions):
 
     return round(total_revenue, 2)
 
+def calculate_region_wise_sales(transactions):
+    """
+    Calculates total sales revenue for each region
+
+    Parameters:
+    - transactions: list of transaction dictionaries
+
+    Returns:
+    - dictionary with region as key and total revenue as value
+
+    Example Output:
+    {
+        'North': 250000.0,
+        'South': 180000.5,
+        'East': 320000.0,
+        'West': 210000.75
+    }
+    """
+
+    region_sales = {}
+
+    for tx in transactions:
+        region = tx['Region']
+        amount = tx['Quantity'] * tx['UnitPrice']
+
+        if region in region_sales:
+            region_sales[region] += amount
+        else:
+            region_sales[region] = amount
+
+    # Optional: round values to 2 decimals
+    for region in region_sales:
+        region_sales[region] = round(region_sales[region], 2)
+
+    return region_sales
+
+def get_top_selling_products(transactions, top_n=5):
+    """
+    Identifies top selling products based on total revenue
+
+    Parameters:
+    - transactions: list of transaction dictionaries
+    - top_n: number of top products to return (default 5)
+
+    Returns:
+    - list of tuples (ProductName, total_revenue) sorted in descending order
+
+    Example Output:
+    [
+        ('Laptop', 350000.0),
+        ('Monitor', 210000.5),
+        ('Keyboard', 120000.0)
+    ]
+    """
+
+    product_sales = {}
+
+    for tx in transactions:
+        product = tx['ProductName']
+
+def analyze_customer_purchases(transactions):
+    """
+    Analyzes customer purchase behavior
+
+    Parameters:
+    - transactions: list of transaction dictionaries
+
+    Returns:
+    - dictionary with CustomerID as key and summary as value
+
+    Example Output:
+    {
+        'C001': {
+            'total_spent': 120000.0,
+            'transaction_count': 3,
+            'average_order_value': 40000.0
+        },
+        'C002': {
+            'total_spent': 85000.0,
+            'transaction_count': 2,
+            'average_order_value': 42500.0
+        }
+    }
+    """
+
+    customer_summary = {}
+
+    for tx in transactions:
+        customer_id = tx['CustomerID']
+        amount = tx['Quantity'] * tx['UnitPrice']
+
+        if customer_id not in customer_summary:
+            customer_summary[customer_id] = {
+                'total_spent': 0.0,
+                'transaction_count': 0
+            }
+
+        customer_summary[customer_id]['total_spent'] += amount
+        customer_summary[customer_id]['transaction_count'] += 1
+
+    # Calculate average order value
+    for customer_id, data in customer_summary.items():
+        data['total_spent'] = round(data['total_spent'], 2)
+        data['average_order_value'] = round(
+            data['total_spent'] / data['transaction_count'], 2
+        )
+
+    return customer_summary
+
+def daily_sales_trend(transactions):
+    """
+    Analyzes sales trends by date
+
+    Returns:
+    - dictionary sorted by date with daily metrics
+    """
+
+    daily_data = {}
+
+    for tx in transactions:
+        date = tx['Date']
+        amount = tx['Quantity'] * tx['UnitPrice']
+        customer = tx['CustomerID']
+
+        if date not in daily_data:
+            daily_data[date] = {
+                'revenue': 0.0,
+                'transaction_count': 0,
+                'customers': set()
+            }
+
+        daily_data[date]['revenue'] += amount
+        daily_data[date]['transaction_count'] += 1
+        daily_data[date]['customers'].add(customer)
+
+    # Prepare final output (sorted by date)
+    daily_trend = {}
+
+    for date in sorted(daily_data.keys()):
+        daily_trend[date] = {
+            'revenue': round(daily_data[date]['revenue'], 2),
+            'transaction_count': daily_data[date]['transaction_count'],
+            'unique_customers': len(daily_data[date]['customers'])
+        }
+
+    return daily_trend
+
+
+def find_peak_sales_day(transactions):
+    """
+    Identifies the date with highest revenue
+
+    Returns:
+    - tuple (date, revenue, transaction_count)
+
+    Example:
+    ('2024-12-15', 185000.0, 12)
+    """
+
+    daily_summary = {}
+
+    for tx in transactions:
+        date = tx['Date']
+        amount = tx['Quantity'] * tx['UnitPrice']
+
+        if date not in daily_summary:
+            daily_summary[date] = {
+                'revenue': 0.0,
+                'transaction_count': 0
+            }
+
+        daily_summary[date]['revenue'] += amount
+        daily_summary[date]['transaction_count'] += 1
+
+    # Find peak sales day
+    peak_date = None
+    peak_revenue = 0.0
+    peak_transactions = 0
+
+    for date, data in daily_summary.items():
+        if data['revenue'] > peak_revenue:
+            peak_revenue = data['revenue']
+            peak_date = date
+            peak_transactions = data['transaction_count']
+
+    return peak_date, round(peak_revenue, 2), peak_transactions
+
+def low_performing_products(transactions, threshold=10):
+    """
+    Identifies products with low sales
+
+    Parameters:
+    - transactions: list of transaction dictionaries
+    - threshold: minimum total quantity threshold
+
+    Returns:
+    - list of tuples (ProductName, TotalQuantity, TotalRevenue)
+    """
+
+    product_summary = {}
+
+    for tx in transactions:
+        product = tx['ProductName']
+        quantity = tx['Quantity']
+        revenue = tx['Quantity'] * tx['UnitPrice']
+
+        if product not in product_summary:
+            product_summary[product] = {
+                'total_quantity': 0,
+                'total_revenue': 0.0
+            }
+
+        product_summary[product]['total_quantity'] += quantity
+        product_summary[product]['total_revenue'] += revenue
+
+    # Identify low performing products
+    low_products = []
+
+    for product, data in product_summary.items():
+        if data['total_quantity'] < threshold:
+            low_products.append(
+                (
+                    product,
+                    data['total_quantity'],
+                    round(data['total_revenue'], 2)
+                )
+            )
+
+    # Sort by TotalQuantity ascending
+    low_products.sort(key=lambda x: x[1])
+
+    return low_products
+
 
 
